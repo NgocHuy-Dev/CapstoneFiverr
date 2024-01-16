@@ -1,0 +1,11 @@
+// tạo module 
+
+nest g resource [tên module] --no-spec
+
+
+// kết nối server sử dụng Prisma
+ - yarn add prisma @prisma/client
+ - yarn prisma init
+ - vào .env sửa lại chuỗi kết nối dữ liệu
+ - yarn prisma db pull
+ - yarn prisma ganerate
