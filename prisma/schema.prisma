@@ -15,7 +15,7 @@ model BinhLuan {
   noi_dung           String?    @db.VarChar(255)
   sao_binh_luan      Int?
   CongViec           CongViec?  @relation(fields: [id_cong_viec], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_id_cong_viec")
-  NguoiDung          NguoiDung? @relation(fields: [ma_nguoi_binh_luan], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_ma_nguoi_binh_luan")
+  NguoiDung          NguoiDung? @relation(fields: [ma_nguoi_binh_luan], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_ma_nguoi_binh_luan")
 
   @@index([id_cong_viec], map: "fk_id_cong_viec")
   @@index([ma_nguoi_binh_luan], map: "fk_ma_nguoi_binh_luan")
@@ -45,7 +45,7 @@ model CongViec {
   nguoi_tao           Int?
   BinhLuan            BinhLuan[]
   ChiTietLoaiCongViec ChiTietLoaiCongViec? @relation(fields: [ma_chi_tiet_loai], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_ma_chi_tiet_loai")
-  NguoiDung           NguoiDung?           @relation(fields: [nguoi_tao], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_nguoi_tao")
+  NguoiDung           NguoiDung?           @relation(fields: [nguoi_tao], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_nguoi_tao")
   ThueCongViec        ThueCongViec[]
 
   @@index([ma_chi_tiet_loai], map: "fk_ma_chi_tiet_loai")
@@ -64,7 +64,7 @@ model NguoiDung {
   email         String?        @unique(map: "email") @db.VarChar(100)
   pass_word     String?        @db.VarChar(255)
   phone         String?        @db.VarChar(255)
-  birth_day     DateTime?      @db.Date
+  birth_day     String?        @db.VarChar(255)
   gender        String?        @db.VarChar(255)
   role          String?        @db.VarChar(255)
   skill         String?        @db.VarChar(255)
@@ -81,7 +81,7 @@ model ThueCongViec {
   ngay_thue     DateTime?  @db.DateTime(0)
   hoan_thanh    Boolean?
   CongViec      CongViec?  @relation(fields: [ma_cong_viec], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_ma_cong_viec")
-  NguoiDung     NguoiDung? @relation(fields: [ma_nguoi_thue], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_ma_nguoi_thue")
+  NguoiDung     NguoiDung? @relation(fields: [ma_nguoi_thue], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_ma_nguoi_thue")
 
   @@index([ma_cong_viec], map: "fk_ma_cong_viec")
   @@index([ma_nguoi_thue], map: "fk_ma_nguoi_thue")

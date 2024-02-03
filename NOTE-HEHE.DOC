@@ -1,6 +1,10 @@
 // tạo module 
 
 nest g resource [tên module] --no-spec
+nest g resource jobs --no-spec
+nest g resource jobTypes --no-spec
+nest g resource hireJob --no-spec
+nest g resource skill --no-spec
 
 
 // kết nối server sử dụng Prisma
@@ -9,3 +13,7 @@ nest g resource [tên module] --no-spec
  - vào .env sửa lại chuỗi kết nối dữ liệu
  - yarn prisma db pull
  - yarn prisma ganerate
+
+
+
+ // COI LẠI PHẦN XÓA DÍNH ĐẾN QUAN HỆ GIỮA CÁC BẢNG

@@ -1,37 +1,226 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { query } from 'express';
+import { Controller, Post, Body, Patch, Param, Delete, Query, Get,Put, UseInterceptors, UploadedFile, Req, HttpException, HttpStatus } from '@nestjs/common';
+import { UsersService } from './user.service';
+import { ConfigService } from '@nestjs/config';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { CreateUserDto } from './dto/users.dto';
+import { Request } from 'express';
+import { ResponseDto } from 'src/dto/response.dto';
 
+
+@ApiTags("User")
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService,
+    private configService: ConfigService)
+    {}
+
+
+    @Get()
+    getAllUsers() {
+      return this.usersService.getAllUsers()
+    }
+    
+    @ApiBody({type:CreateUserDto})
+    @Post()
+    async createUser(@Req() req:Request):Promise<CreateUserDto> {
+      const {
+        name,
+        email,
+        pass_word,
+        phone,
+        birth_day,
+        gender,
+        role,
+        skill,
+        certification,
+      } = req.body
+
+      let checkUser = await this.usersService.createUser(
+        name,
+        email,
+        pass_word,
+        phone,
+        birth_day,
+        gender.toString(),
+        role,
+        skill.toString(),
+        certification.toString(),
+      )
+
+      if(checkUser.check) {
+        throw new HttpException(
+          {
+            message: checkUser.message,
+            content: checkUser.content,
+          },
+          HttpStatus.OK
+        )
+      } else {
+        throw new HttpException(
+          {
+            message: checkUser.message,
+            content: checkUser.content,
+          },
+          HttpStatus.BAD_REQUEST
+        )
+      }
+    }
+
+    @ApiQuery({name:"userId", type:Number})
+    @Delete()
+    async deleteUser(@Req() req:Request):Promise<ResponseDto> {
+      const userId = Number(req.params.userId) 
+      let checkUser = await this.usersService.deleteUser(+userId)
+      if(checkUser.check) {
+        throw new HttpException({
+          message: checkUser.message,
+          content: checkUser.content,
+        },HttpStatus.OK)
+      } else {
+        throw new HttpException({
+          message: checkUser.message,
+          content: checkUser.content,
+        },HttpStatus.BAD_REQUEST)
+      }
+    }
+
+    // phân trang tìm kiếm
+    @ApiQuery({ name: 'pageIndex', type: Number, required: false })
+    @ApiQuery({ name: 'pageSize', type: Number, required: false })
+    @ApiQuery({ name: 'keyword', type: String, required: false })
+    @Get("/page")
+    async panigationUser(@Req() req:Request):Promise<ResponseDto> {
+      const pageIndex = Number(req.query.pageIndex);
+      const pageSize = Number(req.query.pageSize);
+      const keyword = req.query.keyword.toString() ||"";
+
+      let checkUser = await this.usersService.panigationUser(pageIndex, pageSize, keyword)
+
+      if(checkUser.check) {
+        throw new HttpException(
+          {
+            message: checkUser.message,
+            content: checkUser.content,
+          }, HttpStatus.OK
+        )
+      } else {
+        throw new HttpException(
+          {
+            message: checkUser.message,
+            content: checkUser.content,
+          }, HttpStatus.BAD_REQUEST
+        )
+      }
+    }
+
+    @ApiParam({name:"userId", type:Number})
+    @Get(":userId")
+    async getUserById(@Req() req:Request):Promise<ResponseDto> {
+      const userId = Number(req.params.userId)
+      let checkUser = await this.usersService.getUserById(userId)
+
+      if(checkUser.check) {
+        throw new HttpException(
+          {
+            message: checkUser.message,
+            content: checkUser.content,
+          }, HttpStatus.OK
+        )
+      } else {
+        throw new HttpException(
+          {
+            message: checkUser.message,
+            content: checkUser.content,
+          }, HttpStatus.BAD_REQUEST
+        )
+      }
+    }
+
+
+    @ApiParam({name:"userId", type:Number})
+    @ApiBody({type:CreateUserDto})
+    @Put(":userId")
+    async updateUserById(@Req() req:Request):Promise<ResponseDto> {
+      const userId = Number(req.params.userId)
+      const {
+        name,
+        pass_word,
+        phone,
+        birth_day,
+        gender,
+        role,
+        skill,
+        certification,
+      } = req.body
+
+      let checkUser = await this.usersService.updateUserById(
+        userId,
+        name,
+        pass_word,
+        phone,
+        birth_day,
+        gender,
+        role,
+        skill,
+        certification,
+      )
+      if(checkUser.check) {
+        throw new HttpException(
+          {
+            message: checkUser.message,
+            content: checkUser.content,
+          }, HttpStatus.OK
+        )
+      } else {
+        throw new HttpException(
+          {
+            message: checkUser.message,
+            content: checkUser.content,
+          }, HttpStatus.BAD_REQUEST
+        )
+      }
+    }
+
+    @ApiParam({name:"uName", type:String})
+    @Get("/search/:uName")
+    async getUserByName(@Req() req:Request):Promise<ResponseDto> {
+      const uName = req.params.uName
+      let checkUser =  await this.usersService.getUserByName(uName)
+      if(checkUser.check) {
+        throw new HttpException(
+          {
+            message: checkUser.message,
+            content: checkUser.content,
+          }, HttpStatus.OK
+        )
+      } else {
+        throw new HttpException(
+          {
+            message: checkUser.message,
+            content: checkUser.content,
+          }, HttpStatus.BAD_REQUEST
+        )
+      }
+
+    }
 
 
 
-  @Get()
-  findAll( @Query() query: ) {
-    return this.usersService.findAll();
-  }
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
+    @UseInterceptors(FileInterceptor("image", {
+      storage: diskStorage({
+        destination: process.cwd() + "/public",
+        filename: (req, file, callback) => callback(null, new Date().getTime()+ "_" + file.originalname)
+      })
+    })) 
+     
+    @Post("/upload")
+    upload(@UploadedFile() file: Express.Multer.File) {
+      return file
+    }
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
-  }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
-  }
-}
+ 
