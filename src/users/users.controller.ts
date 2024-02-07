@@ -9,8 +9,8 @@ import { Request } from 'express';
 import { ResponseDto } from 'src/dto/response.dto';
 
 
-@ApiTags("User")
-@Controller('users')
+@ApiTags("NguoiDung")
+@Controller('nguoi-dung')
 export class UsersController {
   constructor(private readonly usersService: UsersService,
     private configService: ConfigService)
@@ -184,7 +184,7 @@ export class UsersController {
     }
 
     @ApiParam({name:"uName", type:String})
-    @Get("/search/:uName")
+    @Get("/ /:uName")
     async getUserByName(@Req() req:Request):Promise<ResponseDto> {
       const uName = req.params.uName
       let checkUser =  await this.usersService.getUserByName(uName)
@@ -209,17 +209,7 @@ export class UsersController {
 
 
 
-    @UseInterceptors(FileInterceptor("image", {
-      storage: diskStorage({
-        destination: process.cwd() + "/public",
-        filename: (req, file, callback) => callback(null, new Date().getTime()+ "_" + file.originalname)
-      })
-    })) 
-     
-    @Post("/upload")
-    upload(@UploadedFile() file: Express.Multer.File) {
-      return file
-    }
+
     }
 
 

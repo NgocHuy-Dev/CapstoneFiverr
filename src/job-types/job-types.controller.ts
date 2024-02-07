@@ -5,12 +5,12 @@ import { AddJobType, AllJobType, JobTypeDto } from './dto/job-types.dto';
 import { ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ResponseDto } from 'src/dto/response.dto';
 import { Request } from 'express';
-import { promises } from 'dns';
+
 
 
 
 @ApiTags("LoaiCongViec")
-@Controller('job-types')
+@Controller('loai-cong-viec')
 export class JobTypesController {
   constructor(private readonly jobTypesService: JobTypesService, 
     private configService: ConfigService) {}
@@ -40,7 +40,7 @@ export class JobTypesController {
     @ApiQuery({ name: 'pageSize', type: Number, required: false })
     @ApiQuery({ name: 'keyword', type: String, required: false })
 
-    @Get("/page")
+    @Get("/phan-trang-tim-kiem")
     async getTypePage(@Req() req: Request): Promise<ResponseDto> {
       const pageIndex = Number(req.query.pageIndex);
       const pageSize = Number(req.query.pageSize);
@@ -84,7 +84,7 @@ export class JobTypesController {
 
     @ApiBody({type: JobTypeDto})
     @ApiParam({name:"typeId", type:Number})
-    @Put("/update/:typeId")
+    @Put("/:typeId")
       async updateType(@Req() req:Request):Promise<ResponseDto> {
         const typeId = Number(req.params.typeId)
         const {ten_loai_cong_viec} = req.body

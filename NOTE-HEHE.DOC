@@ -5,6 +5,7 @@ nest g resource jobs --no-spec
 nest g resource jobTypes --no-spec
 nest g resource hireJob --no-spec
 nest g resource skill --no-spec
+nest g resource jobs-detail --no-spec
 
 
 // kết nối server sử dụng Prisma
@@ -17,3 +18,11 @@ nest g resource skill --no-spec
 
 
  // COI LẠI PHẦN XÓA DÍNH ĐẾN QUAN HỆ GIỮA CÁC BẢNG
+ // OK
+
+ // xử lý lại updateComment
+ // createJobDeatail
+ // upload hình ảnh (job)
+ // menu (job)
+ 
+ 

@@ -1,34 +1,159 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Req,
+  HttpException,
+  HttpStatus,
+  Put,
+} from '@nestjs/common';
 import { CommentsService } from './comments.service';
-import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
+import { ConfigService } from '@nestjs/config';
+import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
+import { CommentDto, ResponseCommentDto } from './dto/comment.dto';
+import { Request } from 'express';
+import { ResponseDto } from 'src/dto/response.dto';
 
-@Controller('comments')
+@ApiTags('BinhLuan')
+@Controller('binh-luan')
 export class CommentsController {
-  constructor(private readonly commentsService: CommentsService) {}
-
-  @Post()
-  create(@Body() createCommentDto: CreateCommentDto) {
-    return this.commentsService.create(createCommentDto);
-  }
+  constructor(
+    private readonly commentsService: CommentsService,
+    private configService: ConfigService,
+  ) {}
 
   @Get()
-  findAll() {
-    return this.commentsService.findAll();
+  getAllComment(): Promise<ResponseCommentDto> {
+    return this.commentsService.getAllComment();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.commentsService.findOne(+id);
+  @ApiBody({ type: CommentDto })
+  @Post()
+  async createComment(@Req() req: Request): Promise<ResponseDto> {
+    const {
+      id_cong_viec,
+      ma_nguoi_binh_luan,
+      ngay_binh_luan,
+      noi_dung,
+      sao_binh_luan,
+    } = req.body;
+
+    const checkComment = await this.commentsService.createComment(
+      id_cong_viec,
+      ma_nguoi_binh_luan,
+      ngay_binh_luan,
+      noi_dung,
+      sao_binh_luan,
+    );
+
+    if (checkComment.check) {
+      throw new HttpException(
+        {
+          message: checkComment.message,
+          content: checkComment.content,
+        },
+        HttpStatus.OK,
+      );
+    } else {
+      throw new HttpException(
+        {
+          message: checkComment.message,
+          content: checkComment.content,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto) {
-    return this.commentsService.update(+id, updateCommentDto);
+  @ApiBody({ type: CommentDto })
+  @ApiParam({ name: 'id', type: Number })
+  @Put(':id')
+  async updateComment(@Req() req: Request): Promise<ResponseDto> {
+    const id = Number(req.params.id);
+    const {
+      id_cong_viec,
+      ma_nguoi_binh_luan,
+      ngay_binh_luan,
+      noi_dung,
+      sao_binh_luan,
+    } = req.body;
+
+    const checkComment = await this.commentsService.updateComment(
+      id,
+      id_cong_viec,
+      ma_nguoi_binh_luan,
+      ngay_binh_luan,
+      noi_dung,
+      sao_binh_luan,
+    );
+    if (checkComment.check) {
+      throw new HttpException(
+        {
+          message: checkComment.message,
+          content: checkComment.content,
+        },
+        HttpStatus.OK,
+      );
+    } else {
+      throw new HttpException(
+        {
+          message: checkComment.message,
+          content: checkComment.content,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
+  @ApiParam({ name: 'id', type: Number })
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.commentsService.remove(+id);
+  async deleteComment(@Req() req: Request): Promise<ResponseDto> {
+    const id = Number(req.params.id);
+    const checkComment = await this.commentsService.deleteComment(id);
+    if (checkComment.check) {
+      throw new HttpException(
+        {
+          message: checkComment.message,
+          content: checkComment.content,
+        },
+        HttpStatus.OK,
+      );
+    } else {
+      throw new HttpException(
+        {
+          message: checkComment.message,
+          content: checkComment.content,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @ApiParam({ name: 'jobId', type: Number })
+  @Get('/lay-binh-luan-theo-cong-viec/:jobId')
+  async getCommentById(@Req() req: Request): Promise<ResponseDto> {
+    const jobId = Number(req.params.jobId);
+    const checkComment = await this.commentsService.getCommentById(jobId);
+    if (checkComment.check) {
+      throw new HttpException(
+        {
+          message: checkComment.message,
+          content: checkComment.content,
+        },
+        HttpStatus.OK,
+      );
+    } else {
+      throw new HttpException(
+        {
+          message: checkComment.message,
+          content: checkComment.content,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }

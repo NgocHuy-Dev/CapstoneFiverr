@@ -7,15 +7,18 @@ import { AuthModule } from './auth/auth.module';
 import { JobsModule } from './jobs/jobs.module';
 import { JobTypesModule } from './job-types/job-types.module';
 import { HireJobModule } from './hire-job/hire-job.module';
-import { SkillModule } from './skill/skill.module';
+import { CommentsModule } from './comments/comments.module';
+import { JobsDetailModule } from './jobs-detail/jobs-detail.module';
+import { JwtStrategy } from './strategy/jwt.strategy';
+
 
 @Module({
-  imports: [UsersModule,ConfigModule.forRoot({
+  imports: [UsersModule , AuthModule,ConfigModule.forRoot({
     isGlobal: true
-  }), AuthModule, JobsModule, JobTypesModule, HireJobModule, SkillModule],
+  }),  CommentsModule, JobsModule, JobTypesModule, HireJobModule, JobsDetailModule ],
   
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, JwtStrategy],
 })
 export class AppModule {}
 

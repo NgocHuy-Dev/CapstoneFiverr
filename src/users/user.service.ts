@@ -78,36 +78,6 @@ async createUser(
 }
 
 
-// async deleteUser(userId:number):Promise<ResponseDto> {
-//    let checkUser = await this.prisma.nguoiDung.findFirst({
-//       where: {
-//          id: {
-//             equals: userId,
-//           },
-//       }
-//    })
-
-//    if(!checkUser) {
-//       return {
-//          check:false,
-//          message:"Người dùng không tồn tại",
-//          content:"",
-//       }
-//    } else {
-//       await this.prisma.nguoiDung.delete({
-//          where:{
-//             id: userId
-//          }
-//       })
-//       return {
-//          check:true, 
-//          message: "Xử lý thành công",
-//          content:"Đã Xóa"
-//       }
-//    }
-// }
-
-
 async deleteUser(userId: number): Promise<ResponseDto> {
    let checkUser = await this.prisma.nguoiDung.findFirst({
      where: {
