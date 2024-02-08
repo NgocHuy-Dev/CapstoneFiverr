@@ -96,7 +96,7 @@ export class JobsService {
 
   async getJobById(id: number): Promise<ResponseDto> {
     let data = await this.prisma.congViec.findFirst({
-      where: {id: id},
+      where: {id},
     });
     if(data) {
       return {
@@ -107,7 +107,7 @@ export class JobsService {
     } else {
       return {
         check:false,
-        message:"Không timt thấy công việc",
+        message:"Không tìm thấy công việc",
         content:""
       }
     }
@@ -234,11 +234,20 @@ export class JobsService {
         ChiTietLoaiCongViec:true
       }
     })
-    return {
-      check: true,
-      message: "Xử lý thành công",
-      content: data,
-    };
+    if(data) {
+      return {
+        check: true,
+        message: "Xử lý thành công",
+        content: data,
+      };
+    } else {
+      return {
+        check:false,
+        message:"Không tìm thấy dữ liệu",
+        content:""
+      }
+    }
+    
   }
 
   async getJobDetailById(ma_loai_cong_viec:number):Promise<ResponseDto> {

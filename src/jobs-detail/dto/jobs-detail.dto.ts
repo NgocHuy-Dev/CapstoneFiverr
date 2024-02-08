@@ -27,17 +27,18 @@ export class JobDetailDto {
 }
 
 export class CreateJobDetail {
+  
   @ApiProperty({
-    description: 'id',
-    type: Number,
-  })
-  id: number;
-
-  @ApiProperty({
-    description: 'ten_chi_tiet',
+    description: 'ten_chi_tiet_cv',
     type: String,
   })
-  ten_chi_tiet: string;
+  ten_chi_tiet_cv: string;
+
+  @ApiProperty({
+    description: 'ma_loai_cong_viec',
+    type: Number,
+  })
+  ma_loai_cong_viec: number;
 }
 
 export class ResponseJobDetailDto {

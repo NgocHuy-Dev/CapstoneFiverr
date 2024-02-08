@@ -16,7 +16,10 @@ export class UsersService {
 async getAllUsers() {
     try {
       let data = await this.prisma.nguoiDung.findMany()
-      return data
+      return {
+         message:"Xử lý thành công",
+         content: data
+      }
     } catch (error) {
       throw error
     }
@@ -78,12 +81,10 @@ async createUser(
 }
 
 
-async deleteUser(userId: number): Promise<ResponseDto> {
+async deleteUser(id: number): Promise<ResponseDto> {
    let checkUser = await this.prisma.nguoiDung.findFirst({
-     where: {
-       id: userId,
-     },
-   });
+      where:{id}
+   })
  
    if (!checkUser) {
      return {
@@ -94,7 +95,7 @@ async deleteUser(userId: number): Promise<ResponseDto> {
    } else {
      await this.prisma.nguoiDung.delete({
        where: {
-         id: userId,
+         id: id,
        },
      });
      return {
@@ -128,11 +129,19 @@ async panigationUser(
          },
          },
       });
-      return {
-         check: true,
-         message: "Xử lý thành công",
-         content: data,
-      };
+      if(data) {
+         return {
+            check: true,
+            message: "Xử lý thành công",
+            content: data,
+         };
+      } else {
+         return {
+            check:false,
+            message:"Không tìm thấy dữ liệu",
+            content:""
+         }
+      }
 } 
 
 async getUserById(userId:number):Promise<ResponseDto> {
@@ -143,6 +152,7 @@ async getUserById(userId:number):Promise<ResponseDto> {
    })
 
    if(data) {
+      delete data.pass_word // ẩn mật khẩu
       return {
          check:true,
          message:"Xử lý thành công",
@@ -226,6 +236,4 @@ async getUserByName(uName:string):Promise<ResponseDto> {
       }
    }
 }
-
-
 }

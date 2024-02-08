@@ -22,6 +22,7 @@ export class JobTypeDto {
       type: String,
     })
     ten_loai_cong_viec: string;
+
   }
 
   export class AllJobType {

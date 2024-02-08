@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { ResponseDto } from 'src/dto/response.dto';
-import { ResponseCommentDto } from './dto/comment.dto';
+
 import e from 'express';
 
 @Injectable()
@@ -76,24 +76,57 @@ export class CommentsService {
     noi_dung: string,
     sao_binh_luan: number,
   ): Promise<ResponseDto> {
-    let data = await this.prisma.binhLuan.update({
+    let checkComment = await this.prisma.binhLuan.findFirst({
+      where: { id },
+    });
+    let checkUser = await this.prisma.nguoiDung.findFirst({
       where: {
-        id: id,
-      },
-      data: {
-        id_cong_viec,
-        ma_nguoi_binh_luan,
-        ngay_binh_luan,
-        noi_dung,
-        sao_binh_luan,
+        id: ma_nguoi_binh_luan,
       },
     });
+    let checkJob = await this.prisma.congViec.findFirst({
+      where: {
+        id: id_cong_viec,
+      },
+    });
+    if (!checkComment) {
+      return {
+        check: false,
+        message: 'Không tồn tại bình luận',
+        content: 'Thử lại với id bình luận khác nhé',
+      };
+    } else if (!checkJob) {
+      return {
+        check: false,
+        message: 'Không tồn tại công việc',
+        content: '',
+      };
+    } else if (!checkUser) {
+      return {
+        check: false,
+        message: 'Không tồn tại người dùng',
+        content: '',
+      };
+    } else {
+      let data = await this.prisma.binhLuan.update({
+        where: {
+          id: id,
+        },
+        data: {
+          id_cong_viec,
+          ma_nguoi_binh_luan,
+          ngay_binh_luan,
+          noi_dung,
+          sao_binh_luan,
+        },
+      });
 
-    return {
-      check: true,
-      message: 'Xử lý thành công nhe!!!!',
-      content: data,
-    };
+      return {
+        check: true,
+        message: 'Xử lý thành công nhe!!!!',
+        content: data,
+      };
+    }
   }
 
   async deleteComment(id: number): Promise<ResponseDto> {

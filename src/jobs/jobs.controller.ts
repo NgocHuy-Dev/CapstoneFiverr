@@ -112,8 +112,8 @@ export class JobsController {
     }
   }
 
-  @ApiParam({ name: 'id', type: Number })
-  @Get('/:id')
+  @ApiParam({ name: "id", type: Number })
+  @Get("/:id")
   async getJobById(@Req() req: Request): Promise<ResponseDto> {
     const id = Number(req.params.id);
     let checkJob = await this.jobsService.getJobById(id);
@@ -257,7 +257,6 @@ export class JobsController {
 
   }
 
- 
   @Get("/lay-menu-loai-cong-viec")
   async getJobDetailMenu():Promise<ResponseDto> {
     try {

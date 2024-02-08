@@ -11,18 +11,21 @@ import { CommentsModule } from './comments/comments.module';
 import { JobsDetailModule } from './jobs-detail/jobs-detail.module';
 import { JwtStrategy } from './strategy/jwt.strategy';
 
-
 @Module({
-  imports: [UsersModule , AuthModule,ConfigModule.forRoot({
-    isGlobal: true
-  }),  CommentsModule, JobsModule, JobTypesModule, HireJobModule, JobsDetailModule ],
-  
+  imports: [
+    AuthModule,
+    CommentsModule,
+    JobsDetailModule,
+    JobsModule,
+    JobTypesModule,
+    UsersModule,
+    HireJobModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+  ],
+
   controllers: [AppController],
   providers: [AppService, JwtStrategy],
 })
 export class AppModule {}
-
-
-// kết nối service và controler của đối tượng
-
-

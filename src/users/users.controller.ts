@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { CreateUserDto } from './dto/users.dto';
+import { CreateUserDto, UpdateUserDto } from './dto/users.dto';
 import { Request } from 'express';
 import { ResponseDto } from 'src/dto/response.dto';
 
@@ -68,11 +68,11 @@ export class UsersController {
       }
     }
 
-    @ApiQuery({name:"userId", type:Number})
-    @Delete()
+    @ApiParam({name:"id", type:Number})
+    @Delete("/:id")
     async deleteUser(@Req() req:Request):Promise<ResponseDto> {
-      const userId = Number(req.params.userId) 
-      let checkUser = await this.usersService.deleteUser(+userId)
+      const id = Number(req.params.id) 
+      let checkUser = await this.usersService.deleteUser(id)
       if(checkUser.check) {
         throw new HttpException({
           message: checkUser.message,
@@ -90,11 +90,11 @@ export class UsersController {
     @ApiQuery({ name: 'pageIndex', type: Number, required: false })
     @ApiQuery({ name: 'pageSize', type: Number, required: false })
     @ApiQuery({ name: 'keyword', type: String, required: false })
-    @Get("/page")
+    @Get("/phan-trang-tim-kiem")
     async panigationUser(@Req() req:Request):Promise<ResponseDto> {
       const pageIndex = Number(req.query.pageIndex);
       const pageSize = Number(req.query.pageSize);
-      const keyword = req.query.keyword.toString() ||"";
+      const keyword = req.query.keyword?.toString() || "";
 
       let checkUser = await this.usersService.panigationUser(pageIndex, pageSize, keyword)
 
@@ -140,7 +140,7 @@ export class UsersController {
 
 
     @ApiParam({name:"userId", type:Number})
-    @ApiBody({type:CreateUserDto})
+    @ApiBody({type:UpdateUserDto})
     @Put(":userId")
     async updateUserById(@Req() req:Request):Promise<ResponseDto> {
       const userId = Number(req.params.userId)
@@ -184,7 +184,7 @@ export class UsersController {
     }
 
     @ApiParam({name:"uName", type:String})
-    @Get("/ /:uName")
+    @Get("/search/:uName")
     async getUserByName(@Req() req:Request):Promise<ResponseDto> {
       const uName = req.params.uName
       let checkUser =  await this.usersService.getUserByName(uName)
@@ -205,10 +205,6 @@ export class UsersController {
       }
 
     }
-
-
-
-
 
     }
 

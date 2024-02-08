@@ -1,11 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CommentDto {
-  @ApiProperty({
-    description: 'id',
-    type: Number,
-  })
-  id: number;
+export class CreateCommentDto {
+
 
   @ApiProperty({
     description: 'id_cong_viec',
@@ -38,7 +34,10 @@ export class CommentDto {
   sao_binh_luan: number;
 }
 
-export class ResponseCommentDto {
-  message: string;
-  content: CommentDto[];
+export class CommentDto extends CreateCommentDto {
+  @ApiProperty({
+    description: 'id',
+    type: Number,
+  })
+  id: number;
 }

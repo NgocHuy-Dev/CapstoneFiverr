@@ -14,7 +14,7 @@ import {
 import { CommentsService } from './comments.service';
 import { ConfigService } from '@nestjs/config';
 import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
-import { CommentDto, ResponseCommentDto } from './dto/comment.dto';
+import { CommentDto,CreateCommentDto } from './dto/comment.dto';
 import { Request } from 'express';
 import { ResponseDto } from 'src/dto/response.dto';
 
@@ -27,11 +27,11 @@ export class CommentsController {
   ) {}
 
   @Get()
-  getAllComment(): Promise<ResponseCommentDto> {
+  getAllComment() {
     return this.commentsService.getAllComment();
   }
 
-  @ApiBody({ type: CommentDto })
+  @ApiBody({ type: CreateCommentDto })
   @Post()
   async createComment(@Req() req: Request): Promise<ResponseDto> {
     const {
@@ -69,7 +69,7 @@ export class CommentsController {
     }
   }
 
-  @ApiBody({ type: CommentDto })
+  @ApiBody({ type: CreateCommentDto })
   @ApiParam({ name: 'id', type: Number })
   @Put(':id')
   async updateComment(@Req() req: Request): Promise<ResponseDto> {

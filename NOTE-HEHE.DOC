@@ -25,4 +25,10 @@ nest g resource jobs-detail --no-spec
  // upload hình ảnh (job)
  // menu (job)
  
+
+ catch (exception) {
+        if (exception.status != 500)
+          throw new HttpException(exception.response, exception.status);
+        throw new HttpException("Lỗi ....", HttpStatus.INTERNAL_SERVER_ERROR);
+      }
  

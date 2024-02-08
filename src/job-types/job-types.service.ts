@@ -22,11 +22,12 @@ export class JobTypesService {
     }
   }
 
-  async addType(ten_loai_cong_viec: string): Promise<ResponseDto> {
-    try {
+  async addJobType(ten_loai_cong_viec: string): Promise<ResponseDto> {
+
+      
       let data = await this.prisma.loaiCongViec.create({
         data: {
-          ten_loai_cong_viec,
+          ten_loai_cong_viec
         },
       });
       return {
@@ -37,13 +38,7 @@ export class JobTypesService {
           ten_loai_cong_viec: ten_loai_cong_viec,
         },
       };
-    } catch (exception) {
-      if (exception.status != 500)
-        throw new HttpException(
-          'lỗi tè le... ',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-    }
+    
   }
 
   async getTypePage(
@@ -51,8 +46,7 @@ export class JobTypesService {
     pageSize: number,
     keyword: string,
   ): Promise<ResponseDto> {
-    try {
-      let stringToSearch = {};
+    let stringToSearch = {};
       if (keyword) {
         stringToSearch = {
           name: {
@@ -74,17 +68,9 @@ export class JobTypesService {
         message: 'Xử lý thành công',
         content: data,
       };
-    } catch (exception) {
-      if (exception.status != 500)
-        throw new HttpException(
-          'lỗi tè le... ',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-    }
   }
 
   async getTypeById(typeId: number): Promise<ResponseDto> {
-    try {
       let data = await this.prisma.loaiCongViec.findFirst({
         where: {
           id: typeId,
@@ -103,20 +89,14 @@ export class JobTypesService {
           content: '',
         };
       }
-    } catch (exception) {
-      if (exception.status != 500)
-        throw new HttpException(
-          'lỗi tè le... ',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-    }
-  }
+    } 
+  
 
   async updateType(
     typeId: number,
     ten_loai_cong_viec: string,
   ): Promise<ResponseDto> {
-    try {
+
       let loaiCongViec = await this.prisma.loaiCongViec.update({
         where: {
           id: typeId,
@@ -130,14 +110,7 @@ export class JobTypesService {
         message: 'Xử lý thành công',
         content: loaiCongViec,
       };
-    } catch (exception) {
-      if (exception.status != 500)
-        throw new HttpException(
-          'lỗi tè le... ',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-    }
-  }
+    } 
 
   async deleteType(typeId: number): Promise<ResponseDto> {
     let checkType = await this.prisma.loaiCongViec.findFirst({
@@ -153,7 +126,7 @@ export class JobTypesService {
         content: '',
       };
     } else {
-      await this.prisma.loaiCongViec.delete({
+      let dataDelete=  await this.prisma.loaiCongViec.delete({
         where: {
           id: typeId,
         },
@@ -161,7 +134,7 @@ export class JobTypesService {
       return {
         check: true,
         message: 'Xử lý thành công',
-        content: '',
+        content: dataDelete,
       };
     }
   }
